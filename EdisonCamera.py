@@ -14,7 +14,7 @@ class EdisonCamera:
 		if not self.cap.isOpened:
 			raise Exception('No camera detected!')
 		else:
-			print "Camera ready"
+			print("Camera ready")
 
 	def releaseCap(self):
 		self.cap.release()
@@ -22,7 +22,7 @@ class EdisonCamera:
 	def countDown(self):
 		# Count Down
 		for i in range(self.count):
-			print "%s..." % (self.count - i)
+			print("{0}...".format(self.count - i))
 			time.sleep(1)
 
 	def takeSnapshot(self):
@@ -30,7 +30,9 @@ class EdisonCamera:
 		self.countDown()
 		ret, frame = self.cap.read() #Take snapshot
 		self.releaseCap()
-		return frame
+		cv2.imwrite(str(time.time()) + '.png', frame)
+		ret, image = cv2.imencode('.png', frame)
+		return image
 
 	def saveImage(self):
 		#Save snapshot using timestamp as file name

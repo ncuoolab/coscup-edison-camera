@@ -1,39 +1,33 @@
-import EdisonCamera
-import websocket
-import thread
+from EdisonCamera import EdisonCamera
+import json
+import time
+import base64
+import urllib2
 
-edison = EdisonCamera(5)
+ENV_EDISON_LINK = 'http://localhost:5000/edison'
 
-def send_image(ws, img):
-	ws.send("ping")
+def make_resp(mid, img):
+	return {
+		'mid': mid,
+		'file': mid + '_' + str(time.time()).split('.')[0] + '.png',
+		'data': base64.b64encode(img)
+	}
 
-def on_message(ws, message):
-	edison = EdisonCamera(5)
-	edison.takeSnapshot()
+def send_image(mid, image):
+	print make_resp(mid, image)
 
-def on_error(ws, error):
-	print error
-
-def on_close(ws):
-	print "## CLOSED ##"
-
-def on_open(ws):
-	def run(*args):
-		for i in range(3):
-			time.sleep(1)
-			ws.send("Hello %d" % i)
-		time.sleep(1)
-		ws.close()
-		print "thread terminating..."
-	thread.start_new_thread(run, ())
+def wait_for_update():
+	print "waiting for update..."
+	res = urllib2.urlopen(ENV_EDISON_LINK)
+	obj = json.loads(res.read())
+	if obj != {}:
+		# Start taking snapshot
+		edison = EdisonCamera(5)
+		img = edison.takeSnapshot()
+		send_image(obj['mid'], img)
+	time.sleep(10)
+	wait_for_update()
 
 
 if __name__ == "__main__":
-	websocket.enableTrace(True)
-	ws = websocket.WebSocketApp(
-		"ws://localhost:5000/chat",
-		on_message = on_message,
-		on_error = on_error,
-		on_close = on_close)
-	ws.on_open = on_open
-    ws.run_forever()
+	wait_for_update()
