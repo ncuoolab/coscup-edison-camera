@@ -30,9 +30,10 @@ class EdisonCamera:
 		self.countDown()
 		ret, frame = self.cap.read() #Take snapshot
 		self.releaseCap()
-		cv2.imwrite(str(time.time()) + '.png', frame)
-		ret, image = cv2.imencode('.png', frame)
-		return image
+		filename = str(int(time.time())) + '.jpeg'
+		filepath = './img/' + filename
+		cv2.imwrite(filepath, frame)
+		return filepath
 
 	def saveImage(self):
 		#Save snapshot using timestamp as file name
@@ -42,4 +43,3 @@ class EdisonCamera:
 if __name__ == '__main__':
 	ed = EdisonCamera(5)
 	frame = ed.takeSnapshot()
-	cv2.imwrite(str(time.time()) + '.jpeg', frame)
