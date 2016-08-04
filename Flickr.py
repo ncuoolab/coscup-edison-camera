@@ -1,10 +1,10 @@
 import flickr_api
 
 class Flickr:
-	def __init__(self, album_name=''):
+	def __init__(self, API-KEY, API-SECRET album_name=''):
 		flickr_api.set_keys(
-			api_key=<Flickr-API-KEY>,
-			api_secret=<Flickr-API-SECRET>
+			api_key = API-KEY,
+			api_secret = API-SECRET
 		)
 		flickr_api.set_auth_handler('flickr.auth')
 		self.user = flickr_api.test.login()

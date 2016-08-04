@@ -9,8 +9,11 @@ ENV_EDISON_LINK = <EDISON-LINK>
 ENV_EDISON_REPLY_LINK = <EDISON-REPLY-LINK>
 ENV_ADMIN_ID = <ADMIN-ID>
 ENV_ADMIN_PWD = <ADMIN-PWD>
+ENV_FLICKR_API_KEY = <API-KEY>
+ENV_FLICKR_API_SECRET = <API-SECRET>
 AUTH_STRING = ''
-IMG_BED = Flickr()
+
+IMG_BED = Flickr(ENV_FLICKR_API_KEY, ENV_FLICKR_API_SECRET)
 
 def upload_image(filepath):
 	image_url = IMG_BED.upload_image(filepath)
@@ -37,7 +40,7 @@ def wait_for_update():
 	res = urllib2.urlopen(req)
 	res_data = res.read()
 	obj = json.loads(res_data)
-	if obj != {}:
+	if 'mid' in obj:
 		# Start taking snapshot
 		edison = EdisonCamera(5)
 		filepath = edison.takeSnapshot()
